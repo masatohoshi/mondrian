@@ -2135,13 +2135,14 @@ public class SqlConstraintUtils {
                     AggStar.Table.Column aggColumn =
                         aggStar.lookupColumn(bitPos);
                     if (aggColumn == null) {
-                        throw Util.newInternal(
-                            "AggStar " + aggStar + " has no column for "
-                            + column + " (bitPos " + bitPos + ")");
+                      Table table = column.getTable();
+                      table.addToFrom(sqlQuery, false, true);
+                      q = column.generateExprString(sqlQuery);
+                    } else {
+                        AggStar.Table table = aggColumn.getTable();
+                        table.addToFrom(sqlQuery, false, true);
+                        q = aggColumn.generateExprString(sqlQuery);
                     }
-                    AggStar.Table table = aggColumn.getTable();
-                    table.addToFrom(sqlQuery, false, true);
-                    q = aggColumn.generateExprString(sqlQuery);
                 } else {
                     RolapStar.Table targetTable = column.getTable();
                     hierarchy.addToFrom(sqlQuery, targetTable);
